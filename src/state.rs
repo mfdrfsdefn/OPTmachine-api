@@ -1,7 +1,8 @@
 use std::sync::Arc;
 use solana_sdk::{pubkey::Pubkey, signature::Keypair};
-use crate::services::{create_option_service::CreateOptionService};
+use crate::services::{create_option_service::CreateOptionService, mint_option_service::MintOptionService};
 #[derive(Clone)]
 pub struct AppState {
     pub create_option_service: Arc<CreateOptionService>,
+    pub mint_option_service:Arc<MintOptionService>,
 }

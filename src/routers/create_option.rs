@@ -1,4 +1,4 @@
-use axum::{Router, routing::{get,post}, extract::{State, Json}};
+use axum::{Router, routing::{post}, extract::{State, Json}};
 use crate::AppState;
 use crate::dto::create_option::{CreateOptionRequest, CreateOptionResponse};
 pub fn routes() -> Router<AppState> {
