@@ -11,7 +11,7 @@ pub async fn mint_option(
 ) -> Json<MintOptionResponse> {
     let response = state
         .mint_option_service
-        .build_mint_option_ix(req)
+        .build_mint_option_tx(req)
         .await
         .unwrap();
 

@@ -10,7 +10,7 @@ pub struct MintOptionArgs {
 const SYSTEM_PROGRAM_ID: &str = "11111111111111111111111111111111";
 const TOKEN_PROGRAM_ID: &str = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
 
-pub fn mint_option_ix (
+pub fn build_mint_option_ix (
     program_id: Pubkey,
     minter: Pubkey,
     option_mint: Pubkey,

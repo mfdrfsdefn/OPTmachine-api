@@ -8,7 +8,7 @@ use solana_sdk::{
 use anyhow::Result;
 use solana_client::nonblocking::rpc_client::RpcClient;
 use spl_token::solana_program::program_pack::Pack;
-use crate::clients::mint_option::{mint_option_ix, MintOptionArgs};
+use crate::clients::mint_option::{build_mint_option_ix, MintOptionArgs};
 use crate::dto::mint_option::{MintOptionRequest,MintOptionResponse,OptionAccount};
 use spl_associated_token_account::get_associated_token_address;
 use crate::utils::to_pubkey::to_pubkey;
@@ -25,7 +25,7 @@ impl MintOptionService{
         let rpc = RpcClient::new(rpc_url.to_string());
         Self { rpc, program_id }
     }
-    pub async fn build_mint_option_ix(
+    pub async fn build_mint_option_tx(
         &self,
         req: MintOptionRequest
     ) ->Result<MintOptionResponse>{
@@ -52,7 +52,7 @@ impl MintOptionService{
         let minter_option_account = solana_sdk::pubkey::Pubkey::new_from_array(minter_option_account_pubkey.to_bytes());
         let vault_ata = get_associated_token_address(&option_account_pubkey, &underlying_pubkey);
         let vault = solana_sdk::pubkey::Pubkey::new_from_array(vault_ata.to_bytes());
-        let ix_main= mint_option_ix(
+        let ix_main= build_mint_option_ix(
             self.program_id,
             req.minter,
             req.option_mint,

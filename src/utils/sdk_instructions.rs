@@ -2,10 +2,6 @@ use solana_sdk::{
     instruction::{Instruction as SdkInstruction, AccountMeta as SdkAccountMeta},
     pubkey::Pubkey as SdkPubkey,
 };
-use solana_program::{
-    instruction::{AccountMeta as ProgramAccountMeta},
-    pubkey::Pubkey as ProgramPubkey,
-};
 
 pub fn to_sdk_instruction<T>(ix: T) -> SdkInstruction
 where
