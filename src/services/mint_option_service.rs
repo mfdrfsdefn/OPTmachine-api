@@ -5,7 +5,7 @@ use solana_sdk::{
     pubkey::Pubkey,
     signature::Keypair,
 };
-use anyhow::Result;
+use anyhow::{Result,bail};
 use solana_client::nonblocking::rpc_client::RpcClient;
 use spl_token::solana_program::program_pack::Pack;
 use crate::clients::mint_option::{build_mint_option_ix, MintOptionArgs};
@@ -16,6 +16,7 @@ use bincode::serde::encode_to_vec;
 use bincode::config::standard;
 use spl_token::state::Mint;
 use borsh::{BorshDeserialize,BorshSerialize};
+use chrono::Local;
 pub struct MintOptionService {
     rpc: RpcClient,
     program_id: Pubkey
@@ -40,6 +41,16 @@ impl MintOptionService{
         let option_account_raw = self.rpc.get_account(&option_account_address).await?;
         let option_account_data =option_account_raw.data;
         let option_account = OptionAccount::try_from_slice(&option_account_data[8..]).unwrap();
+        let unix_expiration = option_account.unix_expiration;
+        let unix_now = chrono::Utc::now().timestamp();
+        if unix_now > unix_expiration
+        {
+            bail!(
+                "Option expired: now={} > expiration={}",
+                unix_now,
+                unix_expiration
+            );           
+        }
         let minter_pubkey =to_pubkey(req.minter.to_bytes());
         let underlying_pubkey = to_pubkey(option_account.underlying_mint.to_bytes());
         let quote_pubkey = to_pubkey(option_account.quote_mint.to_bytes());

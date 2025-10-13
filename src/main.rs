@@ -12,7 +12,8 @@ mod utils;
 mod clients;
 
 use solana_sdk::pubkey::Pubkey;
-use crate::services::create_option_service::CreateOptionService;
+use crate::services::exercise_option_service::ExerciseOptionService;
+use crate::{clients::exercise_option::ExerciseOptionArgs, services::create_option_service::CreateOptionService};
 use crate::services::mint_option_service::MintOptionService;
 use tower_http::cors::{CorsLayer, Any};
 
@@ -33,7 +34,8 @@ async fn main() {
 
     let create_option_service = Arc::new(CreateOptionService::new(&rpc_url, program_id));
     let mint_option_service = Arc::new(MintOptionService::new(&rpc_url, program_id));
-    let state = AppState { create_option_service,mint_option_service };
+    let exercise_option_service =Arc::new(ExerciseOptionService::new(&rpc_url, program_id));
+    let state = AppState { create_option_service,mint_option_service,exercise_option_service };
 
     let cors = CorsLayer::new()
         .allow_origin(Any)

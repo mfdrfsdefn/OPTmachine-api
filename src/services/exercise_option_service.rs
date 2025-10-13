@@ -9,7 +9,7 @@ use anyhow::Result;
 use solana_client::nonblocking::rpc_client::RpcClient;
 use spl_token::solana_program::program_pack::Pack;
 use crate::clients::exercise_option::{ExerciseOptionArgs,build_exercise_option_ix};
-use crate::dto::mint_option::{MintOptionRequest,MintOptionResponse,OptionAccount};
+use crate::dto::mint_option::{OptionAccount};
 use spl_associated_token_account::get_associated_token_address;
 use crate::utils::to_pubkey::to_pubkey;
 use bincode::serde::encode_to_vec;
@@ -26,7 +26,7 @@ impl ExerciseOptionService{
         let rpc = RpcClient::new(rpc_url.to_string());
         Self { rpc, program_id }
     }
-        pub async fn build_exercise_option_ix(
+        pub async fn build_exercise_option_tx(
         &self,
         req: ExerciseOptionRequest
     ) ->Result<ExerciseOptionResponse>{
