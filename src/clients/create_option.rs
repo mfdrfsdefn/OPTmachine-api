@@ -1,8 +1,8 @@
-use solana_sdk::instruction::{Instruction, AccountMeta};
+use anyhow::Result;
+use borsh::{BorshDeserialize, BorshSerialize, to_vec};
+use solana_sdk::instruction::{AccountMeta, Instruction};
 use solana_sdk::pubkey::Pubkey;
 use std::str::FromStr;
-use anyhow::Result;
-use borsh::{BorshDeserialize,BorshSerialize,to_vec};
 #[derive(BorshSerialize, BorshDeserialize)]
 pub struct CreateOptionCallArgs {
     pub strike_price: u64,
@@ -43,14 +43,15 @@ pub fn build_create_option_ix(
         AccountMeta::new_readonly(Pubkey::from_str(SYSTEM_PROGRAM_ID).unwrap(), false),
         AccountMeta::new_readonly(Pubkey::from_str(TOKEN_PROGRAM_ID).unwrap(), false),
         AccountMeta::new_readonly(Pubkey::from_str(RENT_SYSVAR_ID).unwrap(), false),
-        AccountMeta::new_readonly(Pubkey::from_str(ASSOCIATED_TOKEN_PROGRAM_ID).unwrap(), false),
+        AccountMeta::new_readonly(
+            Pubkey::from_str(ASSOCIATED_TOKEN_PROGRAM_ID).unwrap(),
+            false,
+        ),
     ];
 
-   Ok(
-     Instruction {
+    Ok(Instruction {
         program_id,
         accounts,
         data: ix_data,
-    }
-   )
+    })
 }

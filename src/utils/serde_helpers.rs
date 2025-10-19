@@ -1,6 +1,6 @@
-use std::str::FromStr;
 use serde::Deserialize;
 use solana_sdk::pubkey::Pubkey;
+use std::str::FromStr;
 
 pub fn pubkey_from_str<'de, D>(deserializer: D) -> Result<Pubkey, D::Error>
 where

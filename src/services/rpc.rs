@@ -12,7 +12,9 @@ pub fn build_rpc_client() -> RpcClient {
         .map(|s| s.trim().to_string())
         .collect();
 
-    let urls = std::iter::once(primary).chain(fallback_urls).collect::<Vec<_>>();
+    let urls = std::iter::once(primary)
+        .chain(fallback_urls)
+        .collect::<Vec<_>>();
 
     for url in urls {
         let client = RpcClient::new_with_timeout(url.clone(), Duration::from_secs(10));

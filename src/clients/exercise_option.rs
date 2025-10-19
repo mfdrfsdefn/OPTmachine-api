@@ -1,8 +1,8 @@
-use solana_sdk::instruction::{Instruction, AccountMeta};
+use anyhow::Result;
+use borsh::{BorshDeserialize, BorshSerialize, to_vec};
+use solana_sdk::instruction::{AccountMeta, Instruction};
 use solana_sdk::pubkey::Pubkey;
 use std::str::FromStr;
-use anyhow::Result;
-use borsh::{BorshDeserialize,BorshSerialize,to_vec};
 #[derive(BorshSerialize, BorshDeserialize)]
 pub struct ExerciseOptionArgs {
     pub exercise_amount: u64,
@@ -38,11 +38,9 @@ pub fn build_exercise_option_ix(
         AccountMeta::new(creator_quote_account, false),
         AccountMeta::new_readonly(Pubkey::from_str(TOKEN_PROGRAM_ID)?, false),
     ];
-   Ok(
-     Instruction {
+    Ok(Instruction {
         program_id,
         accounts,
         data: ix_data,
-    }
-   )
+    })
 }

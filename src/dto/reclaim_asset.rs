@@ -3,17 +3,15 @@ use borsh::{BorshDeserialize, BorshSerialize};
 use serde::{Deserialize, Serialize};
 use solana_sdk::pubkey::Pubkey;
 #[derive(Deserialize)]
-pub struct MintOptionRequest {
+pub struct ReclaimAssetRequest {
     #[serde(deserialize_with = "pubkey_from_str")]
-    pub minter: Pubkey,
+    pub reclaimer: Pubkey,
     #[serde(deserialize_with = "pubkey_from_str")]
     pub option_mint: Pubkey,
-    pub mint_amount: u64,
 }
 #[derive(Serialize)]
-pub struct MintOptionResponse {
+pub struct ReclaimAssetResponse {
     pub unsigned_tx: String,
-    pub mint_amount: u64,
 }
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct OptionAccount {

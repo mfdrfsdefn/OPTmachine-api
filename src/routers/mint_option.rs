@@ -1,6 +1,10 @@
-use axum::{Router, routing::post, extract::{State, Json}};
 use crate::AppState;
 use crate::dto::mint_option::{MintOptionRequest, MintOptionResponse};
+use axum::{
+    Router,
+    extract::{Json, State},
+    routing::post,
+};
 pub fn routes() -> Router<AppState> {
     Router::new().route("/mint", post(mint_option))
 }
