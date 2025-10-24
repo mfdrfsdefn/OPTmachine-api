@@ -29,6 +29,10 @@ async fn main() {
         .expect("OPTMACHINE_PROGRAM_ID must be set")
         .parse::<Pubkey>()
         .expect("Invalid OPTMACHINE_PROGRAM_ID");
+    let amm_program_id = std::env::var("OPTMACHINE_AMM_PROGRAM_ID")
+        .expect("OPTMACHINE_AMM_PROGRAM_ID must be set")
+        .parse::<Pubkey>()
+        .expect("Invalid OPTMACHINE_AMM_PROGRAM_ID");
 
     let rpc_url = std::env::var("SOLANA_RPC_PRIMARY").expect("SOLANA_RPC_PRIMARY must be set");
 
@@ -37,6 +41,9 @@ async fn main() {
     let create_option_service = Arc::new(CreateOptionService::new(&rpc_url, program_id));
     let mint_option_service = Arc::new(MintOptionService::new(&rpc_url, program_id));
     let exercise_option_service = Arc::new(ExerciseOptionService::new(&rpc_url, program_id));
+    let create_amm_pool_service = Arc::new(
+        services::create_amm_pool_service::CreateAmmPoolService::new(&rpc_url, amm_program_id),
+    );
     let reclaim_asset_service = Arc::new(
         services::reclaim_asset_service::ReclaimAssetService::new(&rpc_url, program_id),
     );
@@ -45,6 +52,7 @@ async fn main() {
         mint_option_service,
         exercise_option_service,
         reclaim_asset_service,
+        create_amm_pool_service,
     };
 
     let cors = CorsLayer::new()

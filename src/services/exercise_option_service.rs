@@ -32,7 +32,6 @@ impl ExerciseOptionService {
         };
         let exerciser = req.exerciser;
         let option_mint = req.option_mint;
-        let option_mint = req.option_mint;
         let mint_account = self.rpc.get_account(&option_mint).await?;
         let mint_state = Mint::unpack(&mint_account.data)?;
         let option_account_pubkey = mint_state
