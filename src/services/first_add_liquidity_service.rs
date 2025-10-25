@@ -1,7 +1,6 @@
 use crate::clients::first_add_liquidity::*;
 use crate::dto::first_add_liquidity::{
-    FirstAddLiquidityRequest, FirstAddLiquidityResponse,
-    PoolAccount,
+    FirstAddLiquidityRequest, FirstAddLiquidityResponse, PoolAccount,
 };
 use crate::utils::to_pubkey::to_pubkey;
 use anyhow::Result;
@@ -37,14 +36,10 @@ impl FirstAddLiquidityService {
         let pool_account_pubkey = to_pubkey(pool.to_bytes());
         let mint_a_pubkey = to_pubkey(pool_account.mint_a.to_bytes());
         let mint_b_pubkey = to_pubkey(pool_account.mint_b.to_bytes());
-        let vault_a_ata =
-            get_associated_token_address(&pool_account_pubkey, &mint_a_pubkey);
-        let vault_b_ata =
-            get_associated_token_address(&pool_account_pubkey, &mint_b_pubkey);
-        let provider_a_ata =
-            get_associated_token_address(&provider_pubkey, &mint_a_pubkey);
-        let provider_b_ata =
-            get_associated_token_address(&provider_pubkey, &mint_b_pubkey);
+        let vault_a_ata = get_associated_token_address(&pool_account_pubkey, &mint_a_pubkey);
+        let vault_b_ata = get_associated_token_address(&pool_account_pubkey, &mint_b_pubkey);
+        let provider_a_ata = get_associated_token_address(&provider_pubkey, &mint_a_pubkey);
+        let provider_b_ata = get_associated_token_address(&provider_pubkey, &mint_b_pubkey);
         let vault_a = solana_sdk::pubkey::Pubkey::new_from_array(vault_a_ata.to_bytes());
         let vault_b = solana_sdk::pubkey::Pubkey::new_from_array(vault_b_ata.to_bytes());
         let provider_token_a =
@@ -59,14 +54,16 @@ impl FirstAddLiquidityService {
             vault_b,
             provider_token_a,
             provider_token_b,
+            req.amount_a,
+            req.amount_b,
         )?;
-            let recent_blockhash = self.rpc.get_latest_blockhash().await?;
-            let mut tx = Transaction::new_with_payer(&[ix], Some(&provider));
-            tx.message.recent_blockhash = recent_blockhash;
+        let recent_blockhash = self.rpc.get_latest_blockhash().await?;
+        let mut tx = Transaction::new_with_payer(&[ix], Some(&provider));
+        tx.message.recent_blockhash = recent_blockhash;
         let bytes = encode_to_vec(&tx, standard())?;
         let base64_tx = base64::encode(bytes);
         Ok(FirstAddLiquidityResponse {
             unsigned_tx: base64_tx,
         })
-    }   
+    }
 }

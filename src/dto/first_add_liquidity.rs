@@ -1,9 +1,9 @@
 use crate::utils::serde_helpers::pubkey_from_str;
+use borsh::{BorshDeserialize, BorshSerialize};
 use serde::{Deserialize, Serialize};
 use solana_sdk::pubkey::Pubkey;
-use borsh::{BorshDeserialize, BorshSerialize};
 #[derive(Deserialize)]
-pub struct  FirstAddLiquidityRequest {
+pub struct FirstAddLiquidityRequest {
     #[serde(deserialize_with = "pubkey_from_str")]
     pub provider: Pubkey,
     #[serde(deserialize_with = "pubkey_from_str")]
@@ -12,7 +12,7 @@ pub struct  FirstAddLiquidityRequest {
     pub amount_b: u64,
 }
 #[derive(Serialize)]
-pub struct FirstAddLiquidityResponse{
+pub struct FirstAddLiquidityResponse {
     pub unsigned_tx: String,
 }
 #[derive(BorshDeserialize, BorshSerialize)]

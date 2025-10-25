@@ -1,6 +1,6 @@
-use crate::clients::first_add_liquidity;
 use crate::AppState;
-use crate::dto::first_add_liquidity::{FirstAddLiquidityRequest, FirstAddLiquidityResponse}; 
+use crate::clients::first_add_liquidity;
+use crate::dto::first_add_liquidity::{FirstAddLiquidityRequest, FirstAddLiquidityResponse};
 use axum::{
     Router,
     extract::{Json, State},

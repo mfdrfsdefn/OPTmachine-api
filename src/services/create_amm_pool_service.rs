@@ -1,4 +1,3 @@
-
 use crate::clients::create_amm_pool::*;
 use crate::dto::create_amm_pool::{CreateAmmPoolRequest, CreateAmmPoolResponse};
 use crate::utils::sdk_instructions::to_sdk_instruction;
@@ -65,7 +64,7 @@ impl CreateAmmPoolService {
             option_account,
             pool_account,
             vault_a,
-            vault_b
+            vault_b,
         )?;
         let recent_blockhash = self.rpc.get_latest_blockhash().await?;
         let mut tx = Transaction::new_with_payer(&[ix], Some(&req.creator));

@@ -1,6 +1,6 @@
-use crate::clients::create_amm_pool;
 use crate::AppState;
-use crate::dto::create_amm_pool::{CreateAmmPoolResponse,CreateAmmPoolRequest};
+use crate::clients::create_amm_pool;
+use crate::dto::create_amm_pool::{CreateAmmPoolRequest, CreateAmmPoolResponse};
 use crate::services::create_amm_pool_service;
 use axum::{
     Router,
@@ -15,7 +15,8 @@ pub async fn create_amm_pool(
     State(state): State<AppState>,
     Json(req): Json<CreateAmmPoolRequest>,
 ) -> Json<CreateAmmPoolResponse> {
-    let response = state.create_amm_pool_service
+    let response = state
+        .create_amm_pool_service
         .build_create_amm_pool_tx(req)
         .await
         .unwrap();

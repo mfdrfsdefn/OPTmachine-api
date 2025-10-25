@@ -8,7 +8,11 @@ const SYSTEM_PROGRAM_ID: &str = "11111111111111111111111111111111";
 const TOKEN_PROGRAM_ID: &str = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
 const ASSOCIATED_TOKEN_PROGRAM_ID: &str = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL";
 const RENT_SYSVAR_ID: &str = "SysvarRent111111111111111111111111111111111";
-
+#[derive(BorshSerialize, BorshDeserialize)]
+pub struct FirstAddLiquidityArgs {
+    pub amount_a: u64,
+    pub amount_b: u64,
+}
 pub fn build_first_add_liquidity_ix(
     program_id: Pubkey,
     provider: Pubkey,
@@ -17,11 +21,14 @@ pub fn build_first_add_liquidity_ix(
     vault_b: Pubkey,
     provider_token_a_: Pubkey,
     provider_token_b: Pubkey,
+    amount_a: u64,
+    amount_b: u64,
 ) -> Result<Instruction> {
-    let discriminator: [u8; 8] = [233, 146, 209, 142, 207, 104, 64, 188];
-
+    let discriminator: [u8; 8] = [158, 197, 47, 82, 176, 157, 147, 254];
+    let args = FirstAddLiquidityArgs { amount_a, amount_b };
     let mut ix_data = vec![];
     ix_data.extend_from_slice(&discriminator);
+    ix_data.extend_from_slice(&to_vec(&args)?);
     let accounts = vec![
         AccountMeta::new(provider, true),
         AccountMeta::new(pool_account, false),
