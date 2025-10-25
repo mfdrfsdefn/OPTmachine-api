@@ -47,12 +47,16 @@ async fn main() {
     let reclaim_asset_service = Arc::new(
         services::reclaim_asset_service::ReclaimAssetService::new(&rpc_url, program_id),
     );
+    let first_add_liquidity_service = Arc::new(
+        services::first_add_liquidity_service::FirstAddLiquidityService::new(&rpc_url, amm_program_id),
+    );
     let state = AppState {
         create_option_service,
         mint_option_service,
         exercise_option_service,
         reclaim_asset_service,
         create_amm_pool_service,
+        first_add_liquidity_service,
     };
 
     let cors = CorsLayer::new()

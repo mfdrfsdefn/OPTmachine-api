@@ -1,8 +1,8 @@
 use crate::clients::first_add_liquidity::*;
 use crate::dto::first_add_liquidity::{
     FirstAddLiquidityRequest, FirstAddLiquidityResponse,
+    PoolAccount,
 };
-use crate::dto::mint_option::OptionAccount;
 use crate::utils::to_pubkey::to_pubkey;
 use anyhow::Result;
 use bincode::config::standard;
@@ -15,8 +15,6 @@ use solana_sdk::{
     transaction::Transaction,
 };
 use spl_associated_token_account::get_associated_token_address;
-use spl_token::solana_program::program_pack::Pack;
-use spl_token::state::Mint;
 pub struct FirstAddLiquidityService {
     rpc: RpcClient,
     program_id: Pubkey,
@@ -31,11 +29,14 @@ impl FirstAddLiquidityService {
         req: FirstAddLiquidityRequest,
     ) -> Result<FirstAddLiquidityResponse> {
         let provider = req.provider;
-        let pool_account = req.pool;
+        let pool = req.pool;
+        let pool_account_raw = self.rpc.get_account(&pool).await?;
+        let pool_account_data = pool_account_raw.data;
+        let pool_account = PoolAccount::try_from_slice(&pool_account_data[8..]).unwrap();
         let provider_pubkey = to_pubkey(provider.to_bytes());
-        let pool_account_pubkey = to_pubkey(pool_account.to_bytes());
-        let mint_a_pubkey = to_pubkey(req.mint_a.to_bytes());
-        let mint_b_pubkey = to_pubkey(req.mint_b.to_bytes());
+        let pool_account_pubkey = to_pubkey(pool.to_bytes());
+        let mint_a_pubkey = to_pubkey(pool_account.mint_a.to_bytes());
+        let mint_b_pubkey = to_pubkey(pool_account.mint_b.to_bytes());
         let vault_a_ata =
             get_associated_token_address(&pool_account_pubkey, &mint_a_pubkey);
         let vault_b_ata =
@@ -53,7 +54,7 @@ impl FirstAddLiquidityService {
         let ix = build_first_add_liquidity_ix(
             self.program_id,
             provider,
-            pool_account,
+            pool,
             vault_a,
             vault_b,
             provider_token_a,
@@ -64,7 +65,7 @@ impl FirstAddLiquidityService {
             tx.message.recent_blockhash = recent_blockhash;
         let bytes = encode_to_vec(&tx, standard())?;
         let base64_tx = base64::encode(bytes);
-        Ok(MintOptionResponse {
+        Ok(FirstAddLiquidityResponse {
             unsigned_tx: base64_tx,
         })
     }   
