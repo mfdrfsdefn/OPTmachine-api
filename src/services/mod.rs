@@ -6,3 +6,4 @@ pub mod mint_option_service;
 pub mod reclaim_asset_service;
 pub mod rpc;
 pub mod add_liquidity_service;
+pub mod swap_service;

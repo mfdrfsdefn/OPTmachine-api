@@ -13,6 +13,7 @@ mod utils;
 
 use crate::services::exercise_option_service::ExerciseOptionService;
 use crate::services::mint_option_service::MintOptionService;
+use crate::services::swap_service;
 use crate::{
     clients::exercise_option::ExerciseOptionArgs,
     services::create_option_service::CreateOptionService,
@@ -59,6 +60,12 @@ async fn main() {
                 amm_program_id,
             ),
         );
+        let swap_service = Arc::new(
+            services::swap_service::SwapService::new(
+                &rpc_url,
+                amm_program_id,
+            ),
+        );
     let state = AppState {
         create_option_service,
         mint_option_service,
@@ -67,6 +74,7 @@ async fn main() {
         create_amm_pool_service,
         first_add_liquidity_service,
         add_liquidity_service,
+        swap_service
     };
 
     let cors = CorsLayer::new()
