@@ -1,3 +1,4 @@
+pub mod add_liquidity;
 pub mod create_amm_pool;
 pub mod create_option;
 pub mod exercise_option;

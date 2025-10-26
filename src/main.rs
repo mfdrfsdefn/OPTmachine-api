@@ -53,6 +53,12 @@ async fn main() {
             amm_program_id,
         ),
     );
+        let add_liquidity_service = Arc::new(
+            services::add_liquidity_service::AddLiquidityService::new(
+                &rpc_url,
+                amm_program_id,
+            ),
+        );
     let state = AppState {
         create_option_service,
         mint_option_service,
@@ -60,6 +66,7 @@ async fn main() {
         reclaim_asset_service,
         create_amm_pool_service,
         first_add_liquidity_service,
+        add_liquidity_service,
     };
 
     let cors = CorsLayer::new()
