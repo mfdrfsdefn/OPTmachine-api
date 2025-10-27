@@ -14,6 +14,8 @@ use solana_sdk::{
     transaction::Transaction,
 };
 use spl_associated_token_account::get_associated_token_address;
+use spl_token::solana_program::program_pack::Pack;
+use spl_token::state::Mint;
 pub struct FirstAddLiquidityService {
     rpc: RpcClient,
     program_id: Pubkey,
@@ -46,6 +48,14 @@ impl FirstAddLiquidityService {
             solana_sdk::pubkey::Pubkey::new_from_array(provider_a_ata.to_bytes());
         let provider_token_b =
             solana_sdk::pubkey::Pubkey::new_from_array(provider_b_ata.to_bytes());
+            let mint_b_acc = self.rpc.get_account(&pool_account.mint_b).await?;
+        let mint_b_data = Mint::unpack(&mint_b_acc.data)?;
+        let decimals_b = mint_b_data.decimals;
+        let real_amount_b = req
+            .amount_b
+            .checked_mul(10u64.pow(decimals_b as u32)).ok_or_else(|| anyhow::anyhow!("Overflow when scaling amount_b"))?;
+
+
         let ix = build_first_add_liquidity_ix(
             self.program_id,
             provider,
@@ -55,7 +65,7 @@ impl FirstAddLiquidityService {
             provider_token_a,
             provider_token_b,
             req.amount_a,
-            req.amount_b,
+            real_amount_b,
         )?;
         let recent_blockhash = self.rpc.get_latest_blockhash().await?;
         let mut tx = Transaction::new_with_payer(&[ix], Some(&provider));
