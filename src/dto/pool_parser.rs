@@ -1,6 +1,6 @@
+use crate::utils::serde_helpers::pubkey_from_str;
 use serde::{Deserialize, Serialize};
 use solana_sdk::pubkey::Pubkey;
-use crate::utils::serde_helpers::pubkey_from_str;
 #[derive(Deserialize)]
 pub struct PoolParserRequest {
     #[serde(deserialize_with = "pubkey_from_str")]

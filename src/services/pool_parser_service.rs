@@ -33,7 +33,7 @@ impl PoolParserService {
 
     pub async fn parse_pool_account(
         &self,
-        req: PoolParserRequest
+        req: PoolParserRequest,
     ) -> Result<PoolAccountResponse, StatusCode> {
         let pool_pubkey = &req.pool_account;
         let account = self

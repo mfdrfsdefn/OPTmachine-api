@@ -14,6 +14,8 @@ use solana_sdk::{
 use spl_associated_token_account::get_associated_token_address;
 use spl_associated_token_account::instruction::create_associated_token_account;
 use spl_token::ID as TOKEN_PROGRAM_ID;
+use spl_token::solana_program::program_pack::Pack;
+use spl_token::state::Mint;
 pub struct CreateOptionService {
     rpc: RpcClient,
     program_id: Pubkey,
@@ -29,15 +31,32 @@ impl CreateOptionService {
         &self,
         req: CreateOptionRequest,
     ) -> Result<CreateOptionResponse> {
+        let underlying_mint_acc = self.rpc.get_account(&req.underlying_mint).await?;
+        let underlying_mint_data = Mint::unpack(&underlying_mint_acc.data)?;
+        let underlying_decimals = underlying_mint_data.decimals;
+
+        let quote_mint_acc = self.rpc.get_account(&req.quote_mint).await?;
+        let quote_mint_data = Mint::unpack(&quote_mint_acc.data)?;
+        let quote_decimals = quote_mint_data.decimals;
+        let real_contract_size = req
+            .contract_size
+            .checked_mul(10u64.pow(underlying_decimals as u32))
+            .ok_or_else(|| anyhow::anyhow!("Contract size overflow for underlying mint"))?;
+        let real_strike_price = req
+            .strike_price
+            .checked_mul(10u64.pow(quote_decimals as u32))
+            .ok_or_else(|| anyhow::anyhow!("Strike price overflow for quote mint"))?;
+
         //derive option account
         let (option_account, _bump) = Pubkey::find_program_address(
             &[
                 b"optmachine",
-                &req.creator.as_ref(),
-                &req.underlying_mint.as_ref(),
-                &req.quote_mint.as_ref(),
-                &req.strike_price.to_le_bytes(),
-                &req.unix_expiration.to_le_bytes(),
+                req.creator.as_ref(),
+                req.underlying_mint.as_ref(),
+                req.quote_mint.as_ref(),
+                real_contract_size.to_le_bytes().as_ref(),
+                real_strike_price.to_le_bytes().as_ref(),
+                req.unix_expiration.to_le_bytes().as_ref(),
             ],
             &self.program_id,
         );
@@ -59,9 +78,9 @@ impl CreateOptionService {
         let creator_option_account =
             solana_sdk::pubkey::Pubkey::new_from_array(creator_option_ata.to_bytes());
         let args = CreateOptionCallArgs {
-            strike_price: req.strike_price,
+            strike_price: real_strike_price,
             unix_expiration: req.unix_expiration,
-            contract_size: req.contract_size,
+            contract_size: real_contract_size,
         };
         let mut ixs = vec![];
 

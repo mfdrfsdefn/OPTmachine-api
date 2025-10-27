@@ -25,16 +25,7 @@ pub fn build_swap_ix(
     amount_in: u64,
     a_to_b: bool,
 ) -> Result<Instruction> {
-    let discriminator: [u8; 8] = [
-        248,
-        198,
-        158,
-        145,
-        225,
-        117,
-        135,
-        200
-      ];
+    let discriminator: [u8; 8] = [248, 198, 158, 145, 225, 117, 135, 200];
     let args = SwapArgs { amount_in, a_to_b };
     let mut ix_data = vec![];
     ix_data.extend_from_slice(&discriminator);

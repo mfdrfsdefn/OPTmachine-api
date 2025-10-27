@@ -1,6 +1,6 @@
 use crate::clients::swap::*;
-use crate::dto::swap::{SwapRequest, SwapResponse};
 use crate::dto::add_liquidity::PoolAccount;
+use crate::dto::swap::{SwapRequest, SwapResponse};
 use crate::utils::to_pubkey::to_pubkey;
 use anyhow::Result;
 use bincode::config::standard;
@@ -22,10 +22,7 @@ impl SwapService {
         let rpc = RpcClient::new(rpc_url.to_string());
         Self { rpc, program_id }
     }
-    pub async fn build_swap_tx(
-        &self,
-        req: SwapRequest,
-    ) -> Result<SwapResponse> {
+    pub async fn build_swap_tx(&self, req: SwapRequest) -> Result<SwapResponse> {
         let provider = req.provider;
         let pool = req.pool;
         let pool_account_raw = self.rpc.get_account(&pool).await?;

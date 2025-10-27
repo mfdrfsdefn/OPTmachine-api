@@ -10,7 +10,6 @@ use state::AppState;
 mod clients;
 mod dto;
 mod utils;
-use solana_client::rpc_client::RpcClient;
 use crate::services::exercise_option_service::ExerciseOptionService;
 use crate::services::mint_option_service::MintOptionService;
 use crate::services::swap_service;
@@ -18,6 +17,7 @@ use crate::{
     clients::exercise_option::ExerciseOptionArgs,
     services::create_option_service::CreateOptionService,
 };
+use solana_client::rpc_client::RpcClient;
 use solana_sdk::pubkey::Pubkey;
 use tower_http::cors::{Any, CorsLayer};
 
@@ -54,23 +54,16 @@ async fn main() {
             amm_program_id,
         ),
     );
-        let add_liquidity_service = Arc::new(
-            services::add_liquidity_service::AddLiquidityService::new(
-                &rpc_url,
-                amm_program_id,
-            ),
-        );
-        let swap_service = Arc::new(
-            services::swap_service::SwapService::new(
-                &rpc_url,
-                amm_program_id,
-            ),
-        );
-        let pool_parser_service = Arc::new(
-            services::pool_parser_service::PoolParserService::new(
-                &rpc_url,
-            ),
-        );
+    let add_liquidity_service = Arc::new(
+        services::add_liquidity_service::AddLiquidityService::new(&rpc_url, amm_program_id),
+    );
+    let swap_service = Arc::new(services::swap_service::SwapService::new(
+        &rpc_url,
+        amm_program_id,
+    ));
+    let pool_parser_service = Arc::new(services::pool_parser_service::PoolParserService::new(
+        &rpc_url,
+    ));
     let state = AppState {
         create_option_service,
         mint_option_service,
@@ -81,7 +74,6 @@ async fn main() {
         add_liquidity_service,
         swap_service,
         pool_parser_service,
-
     };
 
     let cors = CorsLayer::new()
