@@ -77,7 +77,6 @@ impl AirdropService {
         tx.sign(&[payer], recent_blockhash);
 
         let sig = self.rpc.send_and_confirm_transaction(&tx).await?;
-        println!("✅ Airdrop TX sent! Signature: {}", sig);
-        Ok(AirdropResponse { ok: true })
+        Ok(AirdropResponse { ok: true,tx: sig.to_string()})
     }
 }

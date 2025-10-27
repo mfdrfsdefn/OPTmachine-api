@@ -2257,6 +2257,7 @@ dependencies = [
  "borsh 1.5.7",
  "chrono",
  "dotenvy",
+ "futures",
  "hyper",
  "num-format",
  "once_cell",

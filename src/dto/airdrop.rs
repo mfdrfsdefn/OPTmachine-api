@@ -10,4 +10,5 @@ pub struct AirdropRequest {
 #[derive(Serialize)]
 pub struct AirdropResponse {
     pub ok: bool,
+    pub tx: String,
 }
