@@ -10,7 +10,7 @@ use state::AppState;
 mod clients;
 mod dto;
 mod utils;
-
+use solana_client::rpc_client::RpcClient;
 use crate::services::exercise_option_service::ExerciseOptionService;
 use crate::services::mint_option_service::MintOptionService;
 use crate::services::swap_service;
@@ -66,6 +66,11 @@ async fn main() {
                 amm_program_id,
             ),
         );
+        let pool_parser_service = Arc::new(
+            services::pool_parser_service::PoolParserService::new(
+                &rpc_url,
+            ),
+        );
     let state = AppState {
         create_option_service,
         mint_option_service,
@@ -74,7 +79,9 @@ async fn main() {
         create_amm_pool_service,
         first_add_liquidity_service,
         add_liquidity_service,
-        swap_service
+        swap_service,
+        pool_parser_service,
+
     };
 
     let cors = CorsLayer::new()

@@ -6,3 +6,4 @@ pub mod first_add_liquidity;
 pub mod mint_option;
 pub mod reclaim_asset;
 pub mod swap;
+pub mod pool_parser;

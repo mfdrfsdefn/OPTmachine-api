@@ -11,6 +11,7 @@ pub mod mint_option;
 pub mod reclaim_asset;
 pub mod add_liquidity;
 pub mod swap;
+pub mod pool_parser;
 pub fn init_routes() -> Router<AppState> {
     Router::new()
         .merge(create_option::routes())
@@ -21,4 +22,5 @@ pub fn init_routes() -> Router<AppState> {
         .merge(first_add_liquidity::routes())
         .merge(add_liquidity::routes())
         .merge(swap::routes())
+        .merge(pool_parser::routes())
 }
