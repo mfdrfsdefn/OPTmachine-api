@@ -48,7 +48,7 @@ impl FirstAddLiquidityService {
             solana_sdk::pubkey::Pubkey::new_from_array(provider_a_ata.to_bytes());
         let provider_token_b =
             solana_sdk::pubkey::Pubkey::new_from_array(provider_b_ata.to_bytes());
-        let mint_b_acc = self.rpc.get_account(&pool_account.mint_b).await?;
+            let mint_b_acc = self.rpc.get_account(&pool_account.mint_b).await?;
         let mint_b_data = Mint::unpack(&mint_b_acc.data)?;
         let decimals_b = mint_b_data.decimals;
         let real_amount_b = req

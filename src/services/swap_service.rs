@@ -12,7 +12,10 @@ use solana_sdk::{
     hash::Hash, instruction::Instruction, pubkey::Pubkey, signature::Keypair,
     transaction::Transaction,
 };
-use spl_associated_token_account::get_associated_token_address;
+use spl_associated_token_account::{get_associated_token_address};
+use spl_associated_token_account::instruction::create_associated_token_account;
+use spl_token::ID as TOKEN_PROGRAM_ID;
+use crate::utils::sdk_instructions::to_sdk_instruction;
 pub struct SwapService {
     rpc: RpcClient,
     program_id: Pubkey,
@@ -42,6 +45,27 @@ impl SwapService {
             solana_sdk::pubkey::Pubkey::new_from_array(provider_a_ata.to_bytes());
         let provider_token_b =
             solana_sdk::pubkey::Pubkey::new_from_array(provider_b_ata.to_bytes());
+            let mut ixs = vec![];
+                if self.rpc.get_account(&provider_token_a).await.is_err() {
+        let ix = create_associated_token_account(
+            &provider_pubkey,    // payer
+            &provider_pubkey,    // owner
+            &mint_a_pubkey, // mint
+            &TOKEN_PROGRAM_ID,
+        );
+        let ix =to_sdk_instruction(ix);
+        ixs.push(ix);
+    }
+    if self.rpc.get_account(&provider_token_b).await.is_err() {
+        let ix = create_associated_token_account(
+            &provider_pubkey,
+            &provider_pubkey,
+            &mint_b_pubkey,
+            &spl_token::ID,
+        );
+        let ix =to_sdk_instruction(ix);
+        ixs.push(ix);
+    }
         let ix = build_swap_ix(
             self.program_id,
             provider,
@@ -53,8 +77,9 @@ impl SwapService {
             req.amount_in,
             req.a_to_b,
         )?;
+        ixs.push(ix);
         let recent_blockhash = self.rpc.get_latest_blockhash().await?;
-        let mut tx = Transaction::new_with_payer(&[ix], Some(&provider));
+        let mut tx = Transaction::new_with_payer(&ixs, Some(&provider));
         tx.message.recent_blockhash = recent_blockhash;
         let bytes = encode_to_vec(&tx, standard())?;
         let base64_tx = base64::encode(bytes);
