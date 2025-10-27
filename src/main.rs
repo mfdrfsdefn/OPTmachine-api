@@ -35,7 +35,10 @@ async fn main() {
         .expect("OPTMACHINE_AMM_PROGRAM_ID must be set")
         .parse::<Pubkey>()
         .expect("Invalid OPTMACHINE_AMM_PROGRAM_ID");
-
+        let port = std::env::var("PORT")
+        .unwrap_or_else(|_| "3000".to_string())
+        .parse::<u16>()
+        .expect("PORT must be a valid number");
     let rpc_url = std::env::var("SOLANA_RPC_PRIMARY").expect("SOLANA_RPC_PRIMARY must be set");
     let keypair_str = std::env::var("AIRDROP_KEYPAIR").expect("AIRDROP_WALLET_KEYPAIR must be set");
     println!("Primary RPC = {:?}", rpc_url);
@@ -105,7 +108,7 @@ async fn main() {
         .with_state(state.clone())
         .layer(cors);
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    let addr = SocketAddr::from(([0, 0, 0, 0], port));
     tracing::info!("Server running at http://{}", addr);
 
     let listener = TcpListener::bind(addr).await.unwrap();

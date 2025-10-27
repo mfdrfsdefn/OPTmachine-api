@@ -88,8 +88,6 @@ impl SwapService {
             );
             ixs.push(to_sdk_instruction(ix));
         }
-
-        // --- 构造 swap 指令 ---
         let ix = build_swap_ix(
             self.program_id,
             provider,
@@ -98,12 +96,11 @@ impl SwapService {
             vault_b,
             provider_token_a,
             provider_token_b,
-            real_amount_in, // ✅ 使用换算后的真实数量
+            real_amount_in,
             req.a_to_b,
         )?;
         ixs.push(ix);
 
-        // --- 打包交易 ---
         let recent_blockhash = self.rpc.get_latest_blockhash().await?;
         let mut tx = Transaction::new_with_payer(&ixs, Some(&provider));
         tx.message.recent_blockhash = recent_blockhash;
