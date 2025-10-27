@@ -1,4 +1,5 @@
 pub mod add_liquidity_service;
+pub mod airdrop_service;
 pub mod create_amm_pool_service;
 pub mod create_option_service;
 pub mod exercise_option_service;

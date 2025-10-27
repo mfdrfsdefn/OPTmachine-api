@@ -13,6 +13,7 @@ pub mod option_parser;
 pub mod pool_parser;
 pub mod reclaim_asset;
 pub mod swap;
+pub mod airdrop;
 pub fn init_routes() -> Router<AppState> {
     Router::new()
         .merge(create_option::routes())
@@ -25,4 +26,5 @@ pub fn init_routes() -> Router<AppState> {
         .merge(swap::routes())
         .merge(pool_parser::routes())
         .merge(option_parser::routes())
+        .merge(airdrop::routes())
 }

@@ -19,6 +19,7 @@ use crate::{
 };
 use solana_client::rpc_client::RpcClient;
 use solana_sdk::pubkey::Pubkey;
+use solana_sdk::signature::{Keypair, Signer};
 use tower_http::cors::{Any, CorsLayer};
 
 #[tokio::main]
@@ -36,9 +37,17 @@ async fn main() {
         .expect("Invalid OPTMACHINE_AMM_PROGRAM_ID");
 
     let rpc_url = std::env::var("SOLANA_RPC_PRIMARY").expect("SOLANA_RPC_PRIMARY must be set");
-
-    println!("Primary RPC = {:?}", std::env::var("SOLANA_RPC_PRIMARY"));
-
+    let keypair_str = std::env::var("AIRDROP_KEYPAIR").expect("AIRDROP_WALLET_KEYPAIR must be set");
+    println!("Primary RPC = {:?}", rpc_url);
+    let keypair_vec: Vec<u8> = serde_json::from_str(&keypair_str)
+        .expect("Invalid AIRDROP_KEYPAIR format — must be JSON array");
+    let airdrop_keypair: [u8; 64] = keypair_vec
+        .try_into()
+        .expect("AIRDROP_KEYPAIR must be an array of 64 bytes");
+    let keypair_32: [u8; 32] = airdrop_keypair[0..32]
+        .try_into()
+        .expect("Failed to extract first 32 bytes for Keypair");
+    let airdrop_wallet = Arc::new(Keypair::new_from_array(keypair_32));
     let create_option_service = Arc::new(CreateOptionService::new(&rpc_url, program_id));
     let mint_option_service = Arc::new(MintOptionService::new(&rpc_url, program_id));
     let exercise_option_service = Arc::new(ExerciseOptionService::new(&rpc_url, program_id));
@@ -67,6 +76,10 @@ async fn main() {
     let option_parser_service = Arc::new(
         services::option_parser_service::OptionParserService::new(&rpc_url),
     );
+    let airdrop_service = Arc::new(services::airdrop_service::AirdropService::new(
+        &rpc_url,
+        airdrop_wallet.clone(),
+    ));
     let state = AppState {
         create_option_service,
         mint_option_service,
@@ -78,6 +91,7 @@ async fn main() {
         swap_service,
         pool_parser_service,
         option_parser_service,
+        airdrop_service,
     };
 
     let cors = CorsLayer::new()

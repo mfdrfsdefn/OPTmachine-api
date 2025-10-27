@@ -45,7 +45,6 @@ impl ReclaimAssetService {
             );
             return Err(anyhow::anyhow!("Invalid or uninitialized option account"));
         }
-
         let option_account = OptionAccount::try_from_slice(&option_account_data[8..])?;
         let underlying_mint = option_account.underlying_mint;
         let underlying_mint_pubkey = to_pubkey(underlying_mint.to_bytes());
