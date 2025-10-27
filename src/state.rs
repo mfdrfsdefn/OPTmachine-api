@@ -2,8 +2,8 @@ use crate::services::{
     add_liquidity_service::AddLiquidityService, create_amm_pool_service::CreateAmmPoolService,
     create_option_service::CreateOptionService, exercise_option_service::ExerciseOptionService,
     first_add_liquidity_service::FirstAddLiquidityService, mint_option_service::MintOptionService,
-    pool_parser_service::PoolParserService, reclaim_asset_service::ReclaimAssetService,
-    swap_service::SwapService,
+    option_parser_service::OptionParserService, pool_parser_service::PoolParserService,
+    reclaim_asset_service::ReclaimAssetService, swap_service::SwapService,
 };
 use solana_sdk::{pubkey::Pubkey, signature::Keypair};
 use std::sync::Arc;
@@ -18,4 +18,5 @@ pub struct AppState {
     pub add_liquidity_service: Arc<AddLiquidityService>,
     pub swap_service: Arc<SwapService>,
     pub pool_parser_service: Arc<PoolParserService>,
+    pub option_parser_service: Arc<OptionParserService>,
 }

@@ -1,4 +1,4 @@
-use std::mem::swap;
+use std::{mem::swap, option};
 
 use crate::state::AppState;
 use axum::Router;
@@ -9,6 +9,7 @@ pub mod exercise_option;
 pub mod first_add_liquidity;
 pub mod health;
 pub mod mint_option;
+pub mod option_parser;
 pub mod pool_parser;
 pub mod reclaim_asset;
 pub mod swap;
@@ -23,4 +24,5 @@ pub fn init_routes() -> Router<AppState> {
         .merge(add_liquidity::routes())
         .merge(swap::routes())
         .merge(pool_parser::routes())
+        .merge(option_parser::routes())
 }

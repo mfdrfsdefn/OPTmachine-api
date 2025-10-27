@@ -64,6 +64,9 @@ async fn main() {
     let pool_parser_service = Arc::new(services::pool_parser_service::PoolParserService::new(
         &rpc_url,
     ));
+    let option_parser_service = Arc::new(
+        services::option_parser_service::OptionParserService::new(&rpc_url),
+    );
     let state = AppState {
         create_option_service,
         mint_option_service,
@@ -74,6 +77,7 @@ async fn main() {
         add_liquidity_service,
         swap_service,
         pool_parser_service,
+        option_parser_service,
     };
 
     let cors = CorsLayer::new()
