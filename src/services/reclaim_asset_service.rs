@@ -38,6 +38,14 @@ impl ReclaimAssetService {
             solana_sdk::pubkey::Pubkey::new_from_array(option_account_pubkey.to_bytes());
         let option_account_raw = self.rpc.get_account(&option_account_address).await?;
         let option_account_data = option_account_raw.data;
+        if option_account_data.len() < 8 {
+            tracing::error!(
+                "❌ Option account data too short: len = {}, account likely uninitialized or invalid PDA",
+                option_account_data.len()
+            );
+            return Err(anyhow::anyhow!("Invalid or uninitialized option account"));
+        }
+
         let option_account = OptionAccount::try_from_slice(&option_account_data[8..])?;
         let underlying_mint = option_account.underlying_mint;
         let underlying_mint_pubkey = to_pubkey(underlying_mint.to_bytes());
