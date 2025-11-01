@@ -63,7 +63,8 @@ impl ReclaimAssetService {
             vault,
         )?;
         let recent_blockhash = self.rpc.get_latest_blockhash().await?;
-        let tx = Transaction::new_with_payer(&[ix], Some(&req.reclaimer));
+        let mut tx = Transaction::new_with_payer(&[ix], Some(&req.reclaimer));
+        tx.message.recent_blockhash = recent_blockhash;
         let serialized_tx = encode_to_vec(&tx, standard())?;
         let unsigned_tx_base64 = base64::encode(&serialized_tx);
         Ok(ReclaimAssetResponse {
